@@ -74,5 +74,6 @@ res$trait[index] <- ao$trait
 
 res %>% arrange(`Pr(>|z|)`) %>% head(30)
 
+
 save(res, file="covid_ascertainment.rdata")
 
