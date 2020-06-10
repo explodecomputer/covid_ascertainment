@@ -1,0 +1,38 @@
+---
+title: "Ascertainment for COVID19 data in UK Biobank"
+output: html_notebook
+---
+
+
+```{r}
+library(qqman)
+library(ggplot2)
+library(dplyr)
+
+load("covid_ascertainment.rdata")
+names(res) <- c("lor", "se", "z", "pval", "exposure", "trait")
+```
+
+
+```{r}
+dir.create("images")
+pdf("images/qq.pdf")
+qq(res$pval)
+dev.off()
+```
+
+
+```{r}
+res$fdr <- p.adjust(res$pval, "fdr")
+table(res$fdr < 0.05)
+```
+
+```{r}
+res %>% filter(fdr < 0.05) %>% arrange(pval)
+```
+
+```{r}
+res %>% arrange(pval) %>% dplyr::select(trait, id=exposure, lor, se, pval) %>% write.csv("covid_ascertainment.csv")
+```
+
+
