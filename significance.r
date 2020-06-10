@@ -96,6 +96,7 @@ dat$t2 <- ao$trait[index]
 
 subset(dat, cont) %>% arrange(desc(dif)) %>% write.csv(., file="dif.csv")
 
+save(dat, file="significance.rdata")
 
 
 fn <- function(id1, id2)
