@@ -1,3 +1,4 @@
+set.seed(12345)
 library(data.table)
 library(dplyr)
 library(parallel)
@@ -48,7 +49,6 @@ phenout <- mclapply(phens, function(x)
 }, mc.cores=16)
 
 
-
 table(phenout[[1]]$FID == phenout[[2]]$FID)
 
 rand <- mclapply(phenout, function(x){
@@ -96,14 +96,11 @@ dat$t2 <- ao$trait[index]
 
 subset(dat, cont) %>% arrange(desc(dif)) %>% write.csv(., file="dif.csv")
 
-save(dat, file="significance.rdata")
-
-
-fn <- function(id1, id2)
+fn_data <- function(id1, id2)
 {
 	example <- rbind(
-		tibble(id1 = rand[,id1], id2 = rand[,id2], what="Random"),
-		tibble(id1 = covi[,id1], id2 = covi[,id2], what="COVID test")
+		tibble(id1 = rand[,id1], id2 = rand[,id2], what="General population"),
+		tibble(id1 = covi[,id1], id2 = covi[,id2], what="Tested for Covid-19")
 	)
 	ggplot(example, aes(x=id1, y=id2)) +
 	geom_point(aes(colour=what), size=0.1) +
@@ -111,9 +108,10 @@ fn <- function(id1, id2)
 }
 
 
+fn_plot <- function(dat)
 
-p <- fn("ukb-b-13686","ukb-b-14540") + labs(x="Age", y="Adiposity", colour="Sample\nselection") + ylim(c(-2.5, 2.5)) + xlim(c(-2.5, 2.5))
+p <- fn("ukb-b-13686","ukb-b-14540") + labs(x="Age", y="Obesity score", colour="Sample\nselection") + ylim(c(-2.5, 2.5)) + xlim(c(-2.5, 2.5))
 ggsave(p, file="significance_plot.pdf")
 
 
-
+save(dat, rand, covi, file="significance.rdata")
