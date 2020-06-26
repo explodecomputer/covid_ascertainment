@@ -102,16 +102,19 @@ fn_data <- function(id1, id2)
 		tibble(id1 = rand[,id1], id2 = rand[,id2], what="General population"),
 		tibble(id1 = covi[,id1], id2 = covi[,id2], what="Tested for Covid-19")
 	)
-	ggplot(example, aes(x=id1, y=id2)) +
-	geom_point(aes(colour=what), size=0.1) +
-	geom_smooth(method="lm", aes(colour=what))
+	return(example)
 }
 
+example <- fn_data("ukb-b-13686","ukb-b-14540")
 
-fn_plot <- function(dat)
+p <- ggplot(example, aes(x=id1, y=id2)) +
+geom_point(aes(colour=what), size=0.1) +
+geom_smooth(method="lm", aes(colour=what)) + 
+labs(x="Age", y="Obesity score", colour="Sample\nselection") + 
+ylim(c(-2.5, 2.5)) + xlim(c(-2.5, 2.5))
 
-p <- fn("ukb-b-13686","ukb-b-14540") + labs(x="Age", y="Obesity score", colour="Sample\nselection") + ylim(c(-2.5, 2.5)) + xlim(c(-2.5, 2.5))
+p <- fn("ukb-b-13686","ukb-b-14540")
 ggsave(p, file="significance_plot.pdf")
 
-
 save(dat, rand, covi, file="significance.rdata")
+save(example, file="example.rdata")
